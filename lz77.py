@@ -1,6 +1,5 @@
 '''
     - implements lz77 compress/decompress
-    - infinite window size
     - infinite look head
     - inefficient complexity implementation
 '''
