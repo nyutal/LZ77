@@ -4,8 +4,6 @@
     - inefficient complexity implementation
 '''
 
-
-
 class LZ77(object):
     def __init__(self, min_sequence, window_size):
         self.min_sequence = min_sequence
@@ -25,17 +23,22 @@ class LZ77(object):
             seq_len -= 1
             if seq_len >= self.min_sequence and data[i:i+seq_len] in window:
                 offset = i - window.find(data[i:i+seq_len])
-                compressed_data += '(' + str(seq_len) + ',' + str(offset) + ')'
+                compressed_data += self.writePair(offset, seq_len)
                 window += data[i:i+seq_len]
                 i += seq_len
             else:
-                compressed_data += data[i]
+                compressed_data += self.writeLitteral(data[i])
                 window += data[i]
                 i += 1
 
             window = window[-self.window_size:]
         return compressed_data
 
+    def writeLitteral(self, literal):
+        return literal
+
+    def writePair(self, offset, length):
+        return '(' + str(length) + ',' + str(offset) + ')'
 
 
 if __name__ == "__main__":
