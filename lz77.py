@@ -4,12 +4,16 @@
     - inefficient complexity implementation
 '''
 
+
 class LZ77(object):
     def __init__(self, min_sequence, window_size):
         self.min_sequence = min_sequence
         self.window_size = window_size
+        self.base_char = 51
 
-    def compress(self, data):
+    def compress(self, data, debug=None):
+        if debug is None:
+            debug = False
 
         compressed_data = ''
         window = ''
@@ -17,14 +21,14 @@ class LZ77(object):
         i = 0
         while i < len(data):
             seq_len = 1
-            while i + seq_len <= len(data) and seq_len <= window and data[i:i+seq_len] in window:
+            while i + seq_len <= len(data) and seq_len <= window and data[i:i + seq_len] in window:
                 seq_len += 1
 
             seq_len -= 1
-            if seq_len >= self.min_sequence and data[i:i+seq_len] in window:
-                offset = i - window.find(data[i:i+seq_len])
-                compressed_data += self.writePair(offset, seq_len)
-                window += data[i:i+seq_len]
+            if seq_len >= self.min_sequence and data[i:i + seq_len] in window:
+                offset = i - window.find(data[i:i + seq_len])
+                compressed_data += self.writePair(offset, seq_len, debug)
+                window += data[i:i + seq_len]
                 i += seq_len
             else:
                 compressed_data += self.writeLitteral(data[i])
@@ -37,8 +41,10 @@ class LZ77(object):
     def writeLitteral(self, literal):
         return literal
 
-    def writePair(self, offset, length):
-        return '(' + str(length) + ',' + str(offset) + ')'
+    def writePair(self, offset, length, debug):
+        res = '(' + str(length) + ',' + str(offset) + ')' if debug else chr(length + self.base_char) + chr(
+            offset + self.base_char)
+        return res
 
 
 if __name__ == "__main__":
@@ -62,4 +68,3 @@ Ill turn you into a goon!'
 
     print data
     print lz77.compress(data)
-
